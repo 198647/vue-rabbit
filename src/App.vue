@@ -3,9 +3,7 @@
 </script>
 
 <template>
-  <el-button type="primary">
-    primanry
-  </el-button>
+<RouterView/>
 </template>
 
 <style scoped>
