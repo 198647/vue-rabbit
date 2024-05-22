@@ -1,7 +1,7 @@
-import httpInstance from '@/uitls/http';
+import http from '@/uitls/http';
 
 export function getCategoryAPI() {
-    return httpInstance({
+    return http({
         url:'/home/category/head'
     })
 }
