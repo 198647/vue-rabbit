@@ -13,7 +13,7 @@ onMounted(() => getNewList())
 </script>
 
 <template>
-    <HomePanel title="新鲜好物" sub-title="dsafasdfsa">
+    <HomePanel title="新鲜好物" sub-title="新鲜出炉 品质靠谱">
 
         <ul class="goods-list">
             <li v-for="item in newList" :key="item.id">

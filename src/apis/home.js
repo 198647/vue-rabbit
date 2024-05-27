@@ -1,15 +1,35 @@
 import http from '@/utils/http';
 
-// getBannerAPI 函数定义没有问题
 export function getBannerAPI() {
     return http({
         url: '/home/banner'
     });
 }
 
-// findNewAPI 函数定义错误修正
 export function findNewAPI() {
     return http({
         url: '/home/new'
     });
 }
+/**
+ * @description: 获取人气推荐
+ * @param {*}
+ * @return {*}
+ */
+export const getHotAPI = () => {
+    return http({
+      url: '/home/hot'
+    })
+  }
+  
+  /**
+   * @description: 获取所有商品模块
+   * @param {*}
+   * @return {*}
+   */
+  export const getGoodsAPI = () => {
+    return http({
+      url: '/home/goods'
+    })
+  }
+
