@@ -1,18 +1,56 @@
 <script setup>
-import { getCategoryFilterAPI } from '@/apis/category'
+import { getCategoryFilterAPI, getSubCategoryAPI } from '@/apis/category';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-const categoryData = ref({})
-const route = useRoute()
+import GoodsItem from '../Home/components/GoodsItem.vue';
+
+const categoryData = ref({});
+const goodList = ref([]);
+const route = useRoute();
+const reqData = ref({
+  categoryDataL: route.params.id,
+  page: 1,
+  pageSize: 20,
+  sortField: 'publishTime',
+});
+
 const getCategoryData = async () => {
-  const res = await getCategoryFilterAPI(route.params.id)
-  categoryData.value = res.result
+  const res = await getCategoryFilterAPI(route.params.id);
+  categoryData.value = res.result;
+};
+
+const getGoodList = async () => {
+  const res = await getSubCategoryAPI(reqData.value);
+  goodList.value = res.result.items;
+  console.log(goodList.value);
+};
+
+onMounted(() => {
+  getCategoryData();
+  getGoodList();
+
+});
+
+const tabChange =()=>{
+console.log('tab',reqData.value.sortField);
+reqData.value.page = 1
+getGoodList()
 }
-onMounted(() => getCategoryData())
+const disabled = ref(false)
+//加载更多
+const load = async ()=>{
+  // console.log('load');
+  reqData.value.page++
+  const res = await getSubCategoryAPI(reqData.value);
+  goodList.value = [...goodList.value,...res.result.items]
+if (res.result.items.length === 0) {
+  disabled.value = true
+}
+}
 </script>
 
 <template>
-  <div class="container ">
+  <div class="container">
     <!-- 面包屑 -->
     <div class="bread-container">
       <el-breadcrumb separator=">">
@@ -23,20 +61,18 @@ onMounted(() => getCategoryData())
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-      <el-tabs>
+      <el-tabs v-model="reqData.sortField" @tab-change="tabChange" >
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div class="body" v-infinite-scroll="load" :infinit-scroll-disobled="disabled">
         <!-- 商品列表-->
+        <GoodsItem v-for="goods in goodList" :goods="goods" :key="goods.id"/>
       </div>
     </div>
   </div>
-
 </template>
-
-
 
 <style lang="scss" scoped>
 .bread-container {
@@ -90,7 +126,5 @@ onMounted(() => getCategoryData())
     display: flex;
     justify-content: center;
   }
-
-
 }
 </style>
