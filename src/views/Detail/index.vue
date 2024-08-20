@@ -1,7 +1,10 @@
 <script setup>
+import DetailHot from './components/DetailHot.vue'
 import {getDetail} from '@/apis/detail'
 import {ref,onMounted} from 'vue'
 import {useRoute} from 'vue-router'
+import {useCartstore} from '@/stores/cartStore';
+const cartStore = useCartstore()
 const goods = ref({})
 const route = useRoute()
 const getGoods = async()=>{
@@ -11,6 +14,34 @@ const getGoods = async()=>{
 onMounted(()=>{
   getGoods()
 })
+let skuObj = {}
+const skuChange = (sku) =>{
+  console.log(sku);
+  skuObj = sku
+}
+
+const count = ref(1)
+const countChange = (count)=>{
+  console.log(count);
+  
+}
+
+const addCart = ()=>{
+if (skuObj.skuId) {
+  cartStore.addCart({
+    id:goods.value.id,
+    name:goods.value.name,
+    pictures:goods.value.mainPictures[0],
+    price:goods.value.price,
+    count:count.value,
+    skuId:skuObj.skuId,
+    attrsText:skuObj.specsText,
+    selected:true
+})
+}else{
+  ElMessage.warning('请选择规格')
+}
+}
 </script>
 
 <template>
@@ -35,7 +66,7 @@ onMounted(()=>{
           <div class="goods-info">
             <div class="media">
               <!-- 图片预览区 -->
-
+              <XtximageView :image-list="goods.mainPictures"/>
               <!-- 统计数量 -->
               <ul class="goods-sales">
                 <li>
@@ -84,12 +115,12 @@ onMounted(()=>{
                 </dl>
               </div>
               <!-- sku组件 -->
-
+            <XtxXtxSku :goods="goods" @change="skuChange"/>
               <!-- 数据组件 -->
-
+              <el-input-number v-model="count" @change="countChange(count)"/>
               <!-- 按钮组件 -->
               <div>
-                <el-button size="large" class="btn">
+                <el-button size="large" class="btn" @click="addCart">
                   加入购物车
                 </el-button>
               </div>
@@ -118,7 +149,8 @@ onMounted(()=>{
             </div>
             <!-- 24热榜+专题推荐 -->
             <div class="goods-aside">
-
+<DetailHot :hot-type="1"/>
+<DetailHot :hot-type="2"/>
             </div>
           </div>
         </div>

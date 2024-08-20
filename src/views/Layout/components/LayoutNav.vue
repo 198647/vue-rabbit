@@ -1,17 +1,26 @@
 <script setup>
-
+import { useUserStore } from "@/stores/user";
+import {useRouter} from 'vue-router'
+const userStare = useUserStore()
+const router = useRouter()
+const confirm =()=>{
+  console.log('adfsafas');
+  //清除用户信息
+  userStare.clearUserInfo()
+  router.push('/login')
+}
 </script>
 
 <template>
   <nav class="app-topnav">
     <div class="container">
       <ul>
-        <template v-if="true">
-          <li><a href="#"><i class="iconfont icon-user"></i>周杰伦</a></li>
+        <template v-if="userStare.userInfo.token">
+          <li><a href="#"><i class="iconfont icon-user"></i>{{userStare.userInfo.account}}</a></li>
           <li>
-            <el-popconfirm title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
+            <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
               <template #reference>
-                <a href="#">退出登录</a>
+                <a href="javascript:;">退出登录</a>
               </template>
             </el-popconfirm>
           </li>
@@ -19,9 +28,9 @@
           <li><a href="#">会员中心</a></li>
         </template>
         <template v-else>
-          <li><a href="#">请先登录</a></li>
-          <li><a href="#">帮助中心</a></li>
-          <li><a href="#">关于我们</a></li>
+          <li><a href="javascript:;" @click="$router.push('/login')">请先登录</a></li>
+          <li><a href="javascript:;" @click="">帮助中心</a></li>
+          <li><a href="javascript:;" @click="">关于我们</a></li>
         </template>
       </ul>
     </div>
