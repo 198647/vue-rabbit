@@ -11,26 +11,24 @@ const http = axios.create({
 
 // axios请求拦截器
 http.interceptors.request.use(config => {
+    // 1. 从pinia获取token数据
     const userStore = useUserStore()
+    // 2. 按照后端的要求拼接token数据
     const token = userStore.userInfo.token
-    if(token){
-        config.headers.Authorization = `bearer${token}`
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
-}, e => Promise.reject(e))
+  }, e => Promise.reject(e))
 
 // axios响应式拦截器
 http.interceptors.response.use(res => res.data, e => {
-    const userStore = useUserStore()
+    // 统一错误提示
     ElMessage({
-        type:'warning',
-        message:e.response.data.message
+      type: 'warning',
+      message: e.response.data.message
     })
-    if (e.response.status === 401) {
-        userStore.clearUserInfo()
-        router.push('/login')
-    }
     return Promise.reject(e)
-})
+  })
 
 export default http
